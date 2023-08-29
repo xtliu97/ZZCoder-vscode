@@ -56,7 +56,7 @@ function registerChatView(
       void vscode.commands.executeCommand(
         "setContext",
         "tabnine.chat.settings-ready",
-        state?.service_level !== "Business"
+        true
       );
     })
     .catch((e) => Logger.error(`Failed to get the user state ${e}`));

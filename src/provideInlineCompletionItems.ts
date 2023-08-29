@@ -8,7 +8,7 @@ import {
 } from "./lookAheadSuggestion";
 import debounceCompletions from "./debounceCompletions";
 import reportSuggestionShown from "./reportSuggestionShown";
-import { shouldBlockCompletions } from "./registration/forceRegistration";
+// import { shouldBlockCompletions } from "./registration/forceRegistration";
 import { Logger } from "./utils/logger";
 
 const END_OF_LINE_VALID_REGEX = new RegExp("^\\s*[)}\\]\"'`]*\\s*[:{;,]?\\s*$");
@@ -26,8 +26,7 @@ export default async function provideInlineCompletionItems(
     if (
       !completionIsAllowed(document, position) ||
       !isValidMidlinePosition(document, position) ||
-      !getShouldComplete() ||
-      shouldBlockCompletions()
+      !getShouldComplete() 
     ) {
       return undefined;
     }

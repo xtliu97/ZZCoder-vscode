@@ -26,13 +26,13 @@ export function shouldBlockCompletions(): boolean {
   // );
 }
 
-export function shouldStatusBarBeProminent(): boolean {
-  return (
-    isForceEnabled.value === true &&
-    statePoller.state.currentState?.service_level === "Free" &&
-    !(statePoller.state.currentState?.is_logged_in ?? false)
-  );
-}
+// export function shouldStatusBarBeProminent(): boolean {
+//   return (
+//     isForceEnabled.value === true &&
+//     statePoller.state.currentState?.service_level === "Free" &&
+//     !(statePoller.state.currentState?.is_logged_in ?? false)
+//   );
+// }
 
 if (isForceEnabled.value === undefined) {
   const disposable = onDidRefreshCapabilities(() => {

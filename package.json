@@ -377,8 +377,13 @@
 		},
 		"configuration": [
 			{
-				"title": "Tabnine",
+				"title": "ZZCoder",
 				"properties": {
+					"ZZCoder.enable": {
+						"type": "boolean",
+						"default": true,
+						"description": "Enable ZZCoder"
+					},
 					"tabnine.disableLineRegex": {
 						"type": "array",
 						"default": [],

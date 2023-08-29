@@ -4,7 +4,7 @@ import {
   StatusBarAlignment,
   window,
 } from "vscode";
-import { getState } from "../binary/requests/requests";
+// import { getState } from "../binary/requests/requests";
 import { STATUS_BAR_COMMAND } from "../commandsHandler";
 import { FULL_BRAND_REPRESENTATION, STATUS_NAME } from "../globals/consts";
 import StatusBarData from "./StatusBarData";
@@ -45,7 +45,8 @@ export function promotionTextIs(text: string): boolean {
   return promotion?.item?.text === text;
 }
 
-export function setServiceLevel(level: ServiceLevel | undefined): void {
+export function 
+setServiceLevel(level: ServiceLevel | undefined): void {
   if (statusBarData) {
     statusBarData.serviceLevel = level;
   }
@@ -56,9 +57,9 @@ export async function onStartServiceLevel(): Promise<void> {
     return;
   }
 
-  const state = await getState();
-  statusBarData.serviceLevel = state?.service_level;
-  statusBarData.isLoggedIn = state?.is_logged_in;
+  // const state = await getState();
+  statusBarData.serviceLevel = "Local"
+  // statusBarData.isLoggedIn = true;
 }
 
 export function setDefaultStatus(): void {
@@ -68,6 +69,7 @@ export function setDefaultStatus(): void {
 
   statusBarData.icon = null;
   statusBarData.text = null;
+  
 }
 
 export function resetDefaultStatus(id?: string): void {

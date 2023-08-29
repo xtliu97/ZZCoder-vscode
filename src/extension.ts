@@ -48,7 +48,7 @@ import registerTestGenCodeLens from "./testgen";
 import { pollUserUpdates } from "./pollUserUpdates";
 import EventName from "./reports/EventName";
 import registerTabnineChatWidgetWebview from "./tabnineChatWidget/tabnineChatWidgetWebview";
-import { forceRegistrationIfNeeded } from "./registration/forceRegistration";
+// import { forceRegistrationIfNeeded } from "./registration/forceRegistration";
 import { installationState } from "./events/installationStateChangedEmitter";
 import { statePoller } from "./state/statePoller";
 import { Logger } from "./utils/logger";
@@ -78,7 +78,7 @@ export async function activate(
   if (context.extensionMode !== vscode.ExtensionMode.Test) {
     handlePluginInstalled(context);
   }
-  forceRegistrationIfNeeded();
+  // forceRegistrationIfNeeded();
 
   return Promise.resolve();
 }

@@ -4,22 +4,22 @@ import { BINARY_STATUS_BAR_FIRST_MESSAGE_POLLING_INTERVAL } from "../globals/con
 import {
   onStartServiceLevel,
   resetDefaultStatus,
-  setServiceLevel,
+  // setServiceLevel,
 } from "./statusBar";
 import handleStatus, {
   disposeStatusBarCommand,
 } from "./statusBarActionHandler";
-import { statePoller } from "../state/statePoller";
+// import { statePoller } from "../state/statePoller";
 
 let statusPollingInterval: NodeJS.Timeout | null = null;
 
 export default function pollStatuses(
   context: vscode.ExtensionContext
 ): vscode.Disposable {
-  const statePollerDisposable = statePoller.event((change) => {
-    setServiceLevel(change.currentState?.service_level);
-  });
-  context.subscriptions.push(statePollerDisposable);
+  // const statePollerDisposable = statePoller.event((change) => {
+  //   setServiceLevel(change.currentState?.service_level);
+  // });
+  // context.subscriptions.push(statePollerDisposable);
   statusPollingInterval = setInterval(() => {
     void doPollStatus(context);
   }, BINARY_STATUS_BAR_FIRST_MESSAGE_POLLING_INTERVAL);

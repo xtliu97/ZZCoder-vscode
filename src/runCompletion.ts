@@ -1,4 +1,4 @@
-import { CancellationToken, Position, Range, TextDocument } from "vscode";
+import { CancellationToken, Position, Range, TextDocument, workspace } from "vscode";
 import {
   // autocomplete,
   AutocompleteParams,
@@ -16,6 +16,7 @@ import {
 } from "./globals/consts";
 import languages from "./globals/languages";
 import { getSDKPath } from "./languages";
+import Config from "./zzcoderConfig"
 
 export default async function runCompletion({
   document,
@@ -54,6 +55,12 @@ export default async function runCompletion({
     indentation_size: getTabSize(),
     sdk_path: getSDKPath(document.languageId),
   };
+
+  let config = workspace.getConfiguration("ZZCoder") as Config;
+  const { enable } = config;
+  if (!enable) {
+    return null;
+  }
 
   const isEmptyLine = document.lineAt(position.line).text.trim().length === 0;
 

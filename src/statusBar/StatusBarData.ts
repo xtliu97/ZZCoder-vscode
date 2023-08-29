@@ -4,6 +4,7 @@ import {
   ExtensionContext,
   StatusBarItem,
   ThemeColor,
+  workspace,
 } from "vscode";
 import { ServiceLevel } from "../binary/state";
 import {
@@ -12,13 +13,24 @@ import {
   isCapabilityEnabled,
 } from "../capabilities/capabilities";
 import {
-  ATTRIBUTION_BRAND,
+  // ATTRIBUTION_BRAND,
   FULL_BRAND_REPRESENTATION,
   LIMITATION_SYMBOL,
   STATUS_BAR_FIRST_TIME_CLICKED,
 } from "../globals/consts";
-import { getPersistedAlphaVersion } from "../preRelease/versions";
-import { shouldStatusBarBeProminent } from "../registration/forceRegistration";
+import Config  from "../zzcoderConfig";
+// import { getPersistedAlphaVersion } from "../preRelease/versions";
+// import { shouldStatusBarBeProminent } from "../registration/forceRegistration";
+
+export function getStatusBarBackgroundColor(): ThemeColor | undefined {
+  const config: Config = workspace.getConfiguration("StarCoderZZ") as Config;
+  const { enbale } = config;
+  if (!enbale) {
+    return new ThemeColor("statusBarItem.warningBackground");
+  }
+  return undefined;
+}
+
 
 export default class StatusBarData implements Disposable {
   private _serviceLevel?: ServiceLevel;
@@ -29,15 +41,21 @@ export default class StatusBarData implements Disposable {
 
   private _text?: string;
 
-  private _isLoggedIn?: boolean;
+  // private _isLoggedIn?: boolean;
 
   constructor(
     private _statusBarItem: StatusBarItem,
-    private _context: ExtensionContext
-  ) {}
+    private _context: ExtensionContext,
+  ) {
+    workspace.onDidChangeConfiguration(this.handleConfigurationChange, this);
+  }
 
   dispose() {
     this._statusBarItem.dispose();
+  }
+
+  private handleConfigurationChange() {
+    this.updateStatusBar();
   }
 
   public set limited(limited: boolean) {
@@ -54,10 +72,10 @@ export default class StatusBarData implements Disposable {
     return this._serviceLevel;
   }
 
-  public set isLoggedIn(isLoggedIn: boolean | undefined) {
-    this._isLoggedIn = isLoggedIn;
-    this.updateStatusBar();
-  }
+  // public set isLoggedIn(isLoggedIn: boolean | undefined) {
+  //   this._isLoggedIn = isLoggedIn;
+  //   this.updateStatusBar();
+  // }
 
   public set icon(icon: string | undefined | null) {
     this._icon = icon || undefined;
@@ -73,6 +91,20 @@ export default class StatusBarData implements Disposable {
     this.updateStatusBar();
   }
 
+  public get currBackgroundColor(): ThemeColor | undefined  {
+
+    let config = workspace.getConfiguration("ZZCoder") as Config;
+  
+    const { enable } = config;
+  
+    if (!enable) {
+      return new ThemeColor("statusBarItem.warningBackground");
+    }
+    else {
+      return undefined;
+    }
+  }
+
   public get text(): string | undefined | null {
     return this._text;
   }
@@ -82,30 +114,32 @@ export default class StatusBarData implements Disposable {
     const serviceLevel = this.getDisplayServiceLevel();
     const limited = this._limited ? ` ${LIMITATION_SYMBOL}` : "";
     this._statusBarItem.text = `${FULL_BRAND_REPRESENTATION}${serviceLevel}${this.getIconText()}${issueText.trimEnd()}${limited}`;
-    if (shouldStatusBarBeProminent()) {
-      this._statusBarItem.text = `${ATTRIBUTION_BRAND}Tabnine: Sign-in is required`;
-      this._statusBarItem.backgroundColor = new ThemeColor(
-        "statusBarItem.warningBackground"
-      );
-    } else {
-      this._statusBarItem.backgroundColor = undefined;
-    }
-    if (
-      this._serviceLevel === "Free" &&
-      !this._isLoggedIn &&
-      isCapabilityEnabled(Capability.FORCE_REGISTRATION)
-    ) {
-      this._statusBarItem.tooltip = "Sign in using your Tabnine account";
-    } else {
-      this._statusBarItem.tooltip =
-        isCapabilityEnabled(
-          Capability.SHOW_AGRESSIVE_STATUS_BAR_UNTIL_CLICKED
-        ) && !this._context.globalState.get(STATUS_BAR_FIRST_TIME_CLICKED)
-          ? "Click 'tabnine' for settings and more information"
-          : `${FULL_BRAND_REPRESENTATION} (Click to open settings)${
-              getPersistedAlphaVersion(this._context) ?? ""
-            }`;
-    }
+    // if (shouldStatusBarBeProminent()) {
+    //   this._statusBarItem.text = `${ATTRIBUTION_BRAND}Tabnine: Sign-in is required`;
+    //   this._statusBarItem.backgroundColor = new ThemeColor(
+    //     "statusBarItem.warningBackground"
+    //   );
+    // } 
+    // else {
+    this._statusBarItem.backgroundColor = this.currBackgroundColor; 
+    
+    // }
+    // if (
+    //   !this._isLoggedIn &&
+    //   isCapabilityEnabled(Capability.FORCE_REGISTRATION)
+    // ) {
+    //   this._statusBarItem.tooltip = "Sign in using your Tabnine account";
+    // } else {
+    //   this._statusBarItem.tooltip =
+    //     isCapabilityEnabled(
+    //       Capability.SHOW_AGRESSIVE_STATUS_BAR_UNTIL_CLICKED
+    //     ) && !this._context.globalState.get(STATUS_BAR_FIRST_TIME_CLICKED)
+    //       ? "Click 'tabnine' for settings and more information"
+    //       : `${FULL_BRAND_REPRESENTATION} (Click to open settings)${
+    //           getPersistedAlphaVersion(this._context) ?? ""
+    //         }`;
+    // }
+    this._statusBarItem.tooltip = `${FULL_BRAND_REPRESENTATION} (Click to change running status`;
   }
 
   private getDisplayServiceLevel(): string {
@@ -113,17 +147,11 @@ export default class StatusBarData implements Disposable {
       return "";
     }
 
-    if (this._serviceLevel === "Business") {
-      return " enterprise";
-    }
-    if (this._serviceLevel === "Trial") {
-      return " pro";
-    }
-
     if (this._serviceLevel === undefined) {
       return "";
     }
-    return this._serviceLevel === "Pro" ? " pro" : " starter";
+    console.log(this._serviceLevel);
+    return this._serviceLevel === "Local" ? " - Local" : "";
   }
 
   private getIconText(): string {

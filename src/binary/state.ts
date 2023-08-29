@@ -26,12 +26,8 @@ enum EmuMode {
 }
 
 export type ServiceLevel =
-  | "Free"
-  | "Pro"
-  | "Trial"
-  | "Trial Expired"
-  | "Lite"
-  | "Business";
+  "Basic"
+  | "Local";
 
 export type DownloadState = {
   status: DownloadStatus;
