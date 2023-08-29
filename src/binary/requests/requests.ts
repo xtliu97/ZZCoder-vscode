@@ -50,6 +50,20 @@ export type CompletionMetadata = {
   snippet_context?: SnippetContext;
 };
 
+export const localApiMetadata: CompletionMetadata = {
+  kind: vscode.CompletionItemKind.Method,
+  origin: CompletionOrigin.LOCAL,
+  detail: "Local API",
+  documentation: "Local API",
+  deprecated: false,
+  completion_kind: CompletionKind.Classic,
+  is_cached: false,
+  snippet_context: {
+    user_intent: UserIntent.NoScope,
+  },
+};
+
+
 export type ResultEntry = {
   new_prefix: string;
   old_suffix: string;
@@ -63,6 +77,21 @@ export type AutocompleteResult = {
   user_message: string[];
   is_locked: boolean;
 };
+
+export function logAutocompleteResult(result: AutocompleteResult | null | undefined
+  ): void {
+  if (!result) {
+    console.info("No result");
+    return;
+  }
+  console.info("Old prefix: " + result.old_prefix);
+  console.info("Results: ");
+  console.info(" new_prefix:" + result.results[0].new_prefix);
+  console.info(" old_suffix:" + result.results[0].old_suffix);
+  console.info(" new_suffix:" + result.results[0].new_suffix);
+  console.info(" ");
+
+}
 
 export function initBinary(processRunArgs: string[] = []): Promise<void> {
   return tabNineProcess.init(processRunArgs);

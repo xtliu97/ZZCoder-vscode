@@ -1,9 +1,12 @@
 import { CancellationToken, Position, Range, TextDocument } from "vscode";
 import {
-  autocomplete,
+  // autocomplete,
   AutocompleteParams,
   AutocompleteResult,
+  logAutocompleteResult
+  
 } from "./binary/requests/requests";
+import {autocomplete_local} from "./binary/requests/requests_local";
 import getTabSize from "./binary/requests/tabSize";
 import { Capability, isCapabilityEnabled } from "./capabilities/capabilities";
 import {
@@ -54,15 +57,16 @@ export default async function runCompletion({
 
   const isEmptyLine = document.lineAt(position.line).text.trim().length === 0;
 
-  const result = await autocomplete(
+  const result = await autocomplete_local(
     requestData,
     isEmptyLine ? INLINE_REQUEST_TIMEOUT : timeout
   );
 
+  logAutocompleteResult(result);
+
   if (result?.results.length || !retry?.cancellationToken) {
     return result;
   }
-
   return handleRetries(requestData, retry);
 }
 
@@ -85,7 +89,7 @@ function handleRetries(
     let timeoutId: NodeJS.Timeout | undefined;
     let lastResult: AutocompleteResult | undefined;
     const intervalId = setInterval(() => {
-      void autocomplete({ ...requestData, cached_only: true })
+      void autocomplete_local({ ...requestData, cached_only: true })
         .then((result) => {
           if (result?.results.length) {
             clearInterval(intervalId);
